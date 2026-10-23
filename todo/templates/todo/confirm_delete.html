@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<section class="panel confirm-panel">
+  <div class="section-heading">
+    <div><span class="section-kicker">DELETE TASK</span><h1>Confirm Delete</h1></div>
+  </div>
+  <div class="delete-warning-icon">!</div>
+  <h2>Delete “{{ todo.title }}”?</h2>
+  <p class="confirm-copy">This action cannot be undone. The task and its details will be permanently removed.</p>
+  {% if todo.description %}<div class="confirm-description">{{ todo.description|linebreaksbr }}</div>{% endif %}
+  <form method="post" class="form-actions confirm-actions">
+    {% csrf_token %}
+    <a class="btn btn-light px-4" href="{% url 'todo_list' %}">Cancel</a>
+    <button class="btn btn-danger px-4" type="submit">Delete Task</button>
+  </form>
+</section>
+{% endblock %}

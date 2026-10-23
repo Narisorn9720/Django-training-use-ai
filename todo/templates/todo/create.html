@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Task{% endblock %}
+
+{% block content %}
+<section class="panel form-panel">
+  <div class="section-heading">
+    <div><span class="section-kicker">NEW TASK</span><h1>Create Task</h1></div>
+  </div>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    <div class="form-grid">
+      <div class="field-group field-title">
+        <label for="{{ form.title.id_for_label }}">Title <span class="required-mark">*</span></label>
+        {{ form.title }}
+        {% for error in form.title.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field-group field-status">
+        <label for="{{ form.status.id_for_label }}">Status</label>
+        {{ form.status }}
+        {% for error in form.status.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field-group field-description">
+        <label for="{{ form.description.id_for_label }}">Description</label>
+        {{ form.description }}
+        {% for error in form.description.errors %}<div class="field-error">{{ error }}</div>{% endfor %}
+      </div>
+      <div class="field-group field-created">
+        <label for="created_at_display">Created Date</label>
+        <input id="created_at_display" class="form-control readonly-date" type="date" value="{{ today|date:'Y-m-d' }}" readonly aria-describedby="created-help">
+        <small id="created-help">Set automatically and cannot be changed.</small>
+      </div>
+    </div>
+    <div class="form-actions">
+      <a class="btn btn-light px-4" href="{% url 'todo_list' %}">Back to Tasks</a>
+      <button class="btn btn-primary px-4" type="submit">Create Task</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
+

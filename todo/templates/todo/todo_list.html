@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Tasks{% endblock %}
+
+{% block content %}
+<section class="panel list-panel">
+  <div class="list-heading">
+    <div class="list-title-group">
+      <span class="section-kicker">YOUR TASKS</span>
+      <h1>Todo List <span class="count-pill">{{ todos|length }}</span></h1>
+    </div>
+    <form class="search-form" method="get" action="{% url 'todo_list' %}">
+      <div class="search-input-wrap">
+        <span class="search-symbol" aria-hidden="true">⌕</span>
+        <input class="form-control" type="search" name="q" value="{{ query }}" placeholder="Search title or description" aria-label="Search title or description">
+      </div>
+      <input class="form-control date-filter" type="date" name="created_date" value="{{ created_date }}" aria-label="Filter by creation date">
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+      {% if query or created_date %}<a class="clear-link" href="{% url 'todo_list' %}">Clear</a>{% endif %}
+    </form>
+    <a class="btn btn-primary new-task-button" href="{% url 'todo_create' %}"><span class="plus">＋</span> New Task</a>
+  </div>
+
+  {% if todos %}
+    <div class="table-responsive">
+      <table class="table todo-table align-middle mb-0">
+        <thead><tr><th>Task</th><th>Status</th><th>Created</th><th class="text-end">Actions</th></tr></thead>
+        <tbody>
+          {% for todo in todos %}
+            <tr>
+              <td class="task-cell">
+                <div class="task-title">{{ todo.title }}</div>
+                {% if todo.description %}<div class="task-description">{{ todo.description|linebreaksbr }}</div>{% else %}<div class="task-description muted">No description</div>{% endif %}
+              </td>
+              <td>
+                {% if todo.status == 'completed' %}<span class="status-badge status-completed"><i></i>Completed</span>
+                {% elif todo.status == 'cancelled' %}<span class="status-badge status-cancelled"><i></i>Cancelled</span>
+                {% else %}<span class="status-badge status-pending"><i></i>Pending</span>{% endif %}
+              </td>
+              <td class="date-cell">{{ todo.created_at|date:"j M Y" }}<small>{{ todo.created_at|date:"H:i" }}</small></td>
+              <td>
+                <div class="action-group">
+                  <a class="action-button action-edit" href="{% url 'todo_edit' todo.pk %}" aria-label="Edit {{ todo.title }}">Edit</a>
+                  <form method="post" action="{% url 'todo_complete' todo.pk %}">
+                    {% csrf_token %}<button class="action-button action-complete" type="submit">Complete</button>
+                  </form>
+                  <form method="post" action="{% url 'todo_cancel' todo.pk %}">
+                    {% csrf_token %}<button class="action-button action-cancel" type="submit">Cancel</button>
+                  </form>
+                  <a class="action-button action-delete" href="{% url 'todo_confirm_delete' todo.pk %}">Delete</a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">✓</div>
+      {% if query or created_date %}<h2>No matching tasks</h2><p>Try another search term or creation date.</p>
+      {% else %}<h2>No tasks yet</h2><p>Create your first task to get started.</p>{% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
